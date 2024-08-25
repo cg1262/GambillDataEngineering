@@ -49,7 +49,7 @@ def get_all_video_details(api_key, channel_id):
         return new_pd#all_videos
   except:
         return vid_id2
-api_key = "AIzaSyA35HXS6nxSlkX5V9c59RRrOO7hlPv8wEI"
-channel_id = "UCxti3udEHVCZLs4NYkUeEEw"
+api_key = ""
+channel_id = ""
 # Example usage:
 all_videos_data = get_all_video_details(api_key, channel_id)
