@@ -123,8 +123,8 @@ def get_video_ids(api_key, channel_id):
 
 
 # Replace with your API key and channel ID
-api_key = "AIzaSyA35HXS6nxSlkX5V9c59RRrOO7hlPv8wEI"
-channel_id = "UCxti3udEHVCZLs4NYkUeEEw"
+api_key = ""
+channel_id = ""
 
 channel_stats = get_channel_stats(api_key, channel_id)
 print(channel_stats)
