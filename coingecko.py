@@ -8,7 +8,7 @@ import pandas as pd
 quoted = urllib.parse.quote_plus("DRIVER={SQL Server};SERVER=GAMBILL-ALIEN-2;DATABASE=DEV-GDE")
 engine = create_engine('mssql+pyodbc:///?odbc_connect={}'.format(quoted))
 
-api_key = 'CG-gvMWpfp9M4U8pLLbng9LQFh1'
+api_key = 'Api key here'
 currency_type = 'usd'
 
 Endpoint_URL = f"https://api.coingecko.com/api/v3/coins/markets?vs_currency={currency_type}"
