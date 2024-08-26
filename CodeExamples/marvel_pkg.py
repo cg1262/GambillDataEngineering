@@ -20,7 +20,7 @@ conn = pyodbc.connect(f'DSN={dsn_name}')
 cursor = conn.cursor()
 
 # Marvel API request URL
-api_key = "c65cab93e25935495c4d6643d58198b3"
+api_key = ""
 base_url = "https://gateway.marvel.com/v1/public/comics"
 limit = 100  # Number of results per page
 

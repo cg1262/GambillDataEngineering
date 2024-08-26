@@ -10,8 +10,8 @@ import pyodbc #this library allows you to make connections to databases
 #all_characters = []
 limit = 25
 offset = 0
-marvel_pub_key = 'c65cab93e25935495c4d6643d58198b3'
-self_private_key = 'c8c38fe6387c2aad4400be3cb0eacd7dadcc52ec'
+marvel_pub_key = ''
+self_private_key = ''
 displayInYT = '"Data provided by Marvel. © 2014 Marvel"'
 attribution_notice_link = 'http://marvel.com'
 v_TimeStamp = datetime.now()
