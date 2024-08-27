@@ -23,4 +23,13 @@ SELECT '"DENSE_RANK"' WIN_FUNCTION,
 FROM 
     staging.employees;
 
-
+Select 
+employee_name,
+Salary,
+Department,
+avg(Salary) over (partition by department) AvgSalaryByDepartment,
+Salary - avg(salary) over(partition by department) Variance_From_Department_Avg,
+percentile_cont(0.5) within group(order by salary desc) over(partition by department) Median_Dept_Salary,
+Salary - percentile_cont(0.5) within group(order by salary desc) over(partition by department) Varaince_From_Dept_Median
+from staging.employees 
+order by Department,salary desc
