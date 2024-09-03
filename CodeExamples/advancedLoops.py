@@ -1,6 +1,3 @@
-
-
-"""
 numbers = [1, 2, 3, 4, 5]
  
 sq2 = []
@@ -27,11 +24,9 @@ print(sq2)
 evens = [num for num in numbers if num % 2 == 0]
 
 print(evens)  
-"""
-# Output: [2, 4]
-#"""
 
-""" 
+# Output: [2, 4]
+
 import pandas as pd
 names = ['Alice', 'Bob', 'Charlie']
 scores = [85, 90, 88]
@@ -56,7 +51,6 @@ for index, name in enumerate(names):
 large_numbers = (num * num for num in range(1, 1000000))
 print(next(large_numbers))  # Output: 1
 print(next(large_numbers))  # Output: 4
-"""
 
    
 

@@ -16,11 +16,12 @@ def load_data(file_path, table_name):
   
     # Connect to SQL Server
     # Pass in variables for each item in the correct order when you run the python script
-    # example: NewDataToNewTable.py cgambill Password123 dev_dw IM-A-SERVER-NAME
+    # example: NewDataToNewTable.py cgambill Password123 dev_dw IM-A-SERVER-NAME FileName(FullPath) NewTableName
     user = sys.argv[1]
     pw = sys.argv[2]
     db = sys.argv[3]
     server = sys.argv[4]
+
     
     conn_str = (
         r"DRIVER={ODBC Driver 17 for SQL Server};"
@@ -88,6 +89,8 @@ def load_data(file_path, table_name):
     print(f"Data loaded successfully into staging.{table_name}")
 
 if __name__ == "__main__":
-    file_path = "D:/data/netflix/Netflix Userbase.csv"  # Replace with your file path
-    table_name = "Netflix"  # Replace with your desired table name
+    newFile = sys.argv[5]
+    newTable = sys.argv[6]
+    file_path = newFile  # Pass in via argument
+    table_name = newTable  # Pass in via argument
     load_data(file_path, table_name)

@@ -1,0 +1,33 @@
+[
+    {
+        "idea": "Big Data Engineering for Small Scale Businesses",
+        "description": "An extensive introduction of big data engineering and its importance in small scale businesses.",
+        "topic": "Big Data",
+        "youtube_title": "Big Data Engineering 101 for Small Scale Businesses",
+        "video_description": "This video will introduce you to the world of big data engineering and its potential for transforming small scale businesses.",
+        "audience_appeal": "SMBs looking to integrate big data into their business.",
+        "outline": "Introduction, big data definition, importance, application in small business, case studies, conclusion.",
+        "hook": "Ever wondered how big data could revolutionize your small business? Start here!"
+    },
+    {
+        "idea": "Maintaining Data Privacy while Engineering SMBs' Data",
+        "description": "A deep dive into the best practices for maintaining privacy while working with data.",
+        "topic": "Data Privacy",
+        "youtube_title": "Data Engineering and Privacy – A Balancing Act for SMBs",
+        "video_description": "Learn how SMBs can maintain privacy while deriving value from data.",
+        "audience_appeal": "Businesses concerned with data privacy.",
+        "outline": "Introduction, significance of data privacy, best practices, case studies, conclusion.",
+        "hook": "Worried about data privacy while seeking value from it? This is the guide!"
+    },
+    {
+        "idea": "Real-time Data Processing for SMBs",
+        "description": "Understanding real-time data processing and its benefits for SMBs",
+        "topic": "Real-time Data Processing",
+        "youtube_title": "Real-time Data Processing: A Game Changer for SMBs",
+        "video_description": "Discover how real-time data processing can push your business to the next level.",
+        "audience_appeal": "Businesses looking to upgrade their data processing methods.",
+        "outline": "Introduction, real-time data basics, benefits, application, conclusion.",
+        "hook": "Want to take your data game to the next level? Tune in now!"
+    },
+    ...
+]
