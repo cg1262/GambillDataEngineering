@@ -1,23 +1,65 @@
 
+
+"""
 numbers = [1, 2, 3, 4, 5]
+ 
+sq2 = []
+for num in numbers:
+    sq2.append(num*num)
+    
+print(sq2)
+
 squared = [num * num for num in numbers]
-print(squared)  # Output: [1, 4, 9, 16, 25]
+print(squared)  
+
+# Output: [1, 4, 9, 16, 25]
+
+numbers = [1, 2, 3, 4, 5]
+
+sq2 = []
+
+for num in numbers: 
+    if num % 2 == 0:
+        sq2.append(num)
+
+print(sq2)
 
 evens = [num for num in numbers if num % 2 == 0]
-print(evens)  # Output: [2, 4]
 
+print(evens)  
+"""
+# Output: [2, 4]
+#"""
+
+""" 
+import pandas as pd
 names = ['Alice', 'Bob', 'Charlie']
 scores = [85, 90, 88]
 
 for name, score in zip(names, scores):
     print(f'{name} scored {score}')
 
+    
+   
+df = pd.DataFrame(zip(names,scores),columns=['Names','Scores'])
+
+print(df)
+
+
+names = ['Alice', 'Bob', 'Charlie']
+scores = [85, 90, 88]
 for index, name in enumerate(names):
     print(f'{index}: {name}')
+
+  
 
 large_numbers = (num * num for num in range(1, 1000000))
 print(next(large_numbers))  # Output: 1
 print(next(large_numbers))  # Output: 4
+"""
+
+   
+
 
 matrix1 = [
     [1, 2, 3],
@@ -53,3 +95,4 @@ result_matrix = [
 print("Sum of matrices with list comprehension:")
 for row in result_matrix:
     print(row)
+ 

@@ -1,4 +1,4 @@
-"""
+
 # Creating a list
 fruits = ['apple', 'banana', 'cherry']
 
@@ -21,7 +21,7 @@ for fruit in fruits:
     print(fruit)
 
 print(fruits)
-"""
+""""""
 """
 # Creating a dictionary
 student = {
@@ -93,6 +93,7 @@ print(set1 & set2)  # Output: {3}
 # Difference
 print(set1 - set2)  # Output: {1, 2}
 """
+"""
 # Creating a tuple
 dimensions = (1920, 1080)
 
@@ -108,4 +109,4 @@ print(locations)
 # Tuple unpacking
 width, height = dimensions
 print(f'Width: {width}, Height: {height}')  # Output: Width: 1920, Height: 1080
-#"""
+"""
