@@ -130,9 +130,9 @@ def push_to_sql_server(df,schema,table_name):
     print(f"Content ideas pushed to the {schema}.{table_name} table in the SQL Server database.")
 
 # Example usage:
-target_audience = "SMBs looking to start managing and getting insights from their data."
+target_audience = "SMBs"
 niche = "data engineering"
-social_platform = "YouTube"
+social_platform = "TikTok"
 number_of_ideas = 50  # Specify the number of content ideas you want
 
 # Call the function to generate, save, load, and push the content ideas
