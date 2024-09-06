@@ -1,4 +1,4 @@
-
+"""
 # Creating a list
 fruits = ['apple', 'banana', 'cherry']
 
@@ -21,7 +21,7 @@ for fruit in fruits:
     print(fruit)
 
 print(fruits)
-""""""
+"""
 """
 # Creating a dictionary
 student = {
@@ -69,7 +69,7 @@ student['age'] = 22
 del student['courses']
 print(student)
 """
-"""
+"""""""""
 print("***CREATING A SET ***")
 # Creating a set
 colors = {'red', 'green', 'blue'}
@@ -92,7 +92,7 @@ print(set1 & set2)  # Output: {3}
 
 # Difference
 print(set1 - set2)  # Output: {1, 2}
-"""
+
 """
 # Creating a tuple
 dimensions = (1920, 1080)
@@ -109,4 +109,3 @@ print(locations)
 # Tuple unpacking
 width, height = dimensions
 print(f'Width: {width}, Height: {height}')  # Output: Width: 1920, Height: 1080
-"""
