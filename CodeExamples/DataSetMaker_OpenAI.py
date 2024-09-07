@@ -2,17 +2,27 @@ import openai
 import pyodbc
 import GetParameters as gp
 import json
-
+import re
+# Function to extract and clean JSON content from the response
+def extract_json_from_response(response_text):
+    # Use regex to extract the JSON part between ```json and ```
+    json_match = re.search(r'```json(.*?)```', response_text, re.DOTALL)
+    if json_match:
+        json_str = json_match.group(1).strip()  # Extract and strip whitespace
+        return json_str
+    else:
+        raise ValueError("No valid JSON found in the response.")
+    
 # Function to create SQL column definitions from JSON
 def parse_json_response(json_response):
     columns = json_response["columns"]
     data = json_response["data"]
-
+    sql = json_response['sql_create']
     # Create SQL column definitions
     columns_with_types = [f"{col['name']} {col['type']}" for col in columns]
     create_table_structure = ", ".join(columns_with_types)
 
-    return create_table_structure, data
+    return create_table_structure, data, sql
 
 # Set your parameter file path
 local_param_file = 'D:/data/params.txt'  # Replace with the location of your parameter file
@@ -52,7 +62,7 @@ json_example = {"columns": [
     ]
 }
 # 2. Generate synthetic data and structure with OpenAI using the new API format
-prompt = f"Generate a {dataset_description} dataset with {rows} rows in JSON format similar to {json_example}. {create_table_response}"
+prompt = f'Do not truncate or summarize the rows and Generate a {dataset_description} dataset with {rows} rows in JSON format similar to {json_example}. {create_table_response}. The JSON response should include: 1. A "columns" section where each column is defined with its name and data type. 2. A "data" section that contains exactly {rows} rows of data. Ensure the number of rows matches the requested count. 3. Every record should match the schema defined in the "columns" section. 4. A "sql_create" section with a create table sql statement to create the table in sql server. Return the response in valid JSON format. Return the full dataset in valid JSON format. Do not truncate or summarize the rows.'
 
 # Add custom columns to the prompt if provided
 if custom_columns:
@@ -66,20 +76,21 @@ if constraints:
 prompt += " Return the column definitions and the data in JSON format with column types and sample data."
 
 response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",  # Or use "gpt-4" if available
+    model="gpt-4-turbo",  # Or use "gpt-4" if available
     messages=[
-        {"role": "system", "content": "You are a helpful assistant that generates synthetic datasets."},
+        {"role": "system", "content": "You are a master data engineer that provides properly formatted json responses for synthetic datasets."},
         {"role": "user", "content": prompt}
     ],
-    max_tokens=1500
+    max_tokens=4000
 )
 
-generated_json = response['choices'][0]['message']['content']
-print(response)
+generated_text = response['choices'][0]['message']['content']
+print(generated_text)
 # 3. Parse the JSON response
 try:
-    json_response = json.loads(generated_json)  # Convert the response string to a Python dictionary
-    columns_sql, synthetic_data = parse_json_response(json_response)
+    json_str = extract_json_from_response(generated_text)  # Extract the JSON part
+    json_response = json.loads(json_str)  # Convert the response string to a Python dictionary
+    columns_sql, synthetic_data, create = parse_json_response(json_response)
 except json.JSONDecodeError as e:
     print(f"Error parsing JSON from OpenAI response: {e}")
     exit()
@@ -95,7 +106,7 @@ except pyodbc.Error as db_error:
 
 # 5. Generate and execute CREATE TABLE SQL statement
 try:
-    create_table_sql = json_response['sql_create']
+    create_table_sql = create
     cursor.execute(create_table_sql)
     conn.commit()
 except pyodbc.Error as sql_error:
@@ -108,7 +119,7 @@ except pyodbc.Error as sql_error:
 try:
     for row in synthetic_data:
         # Extract values from the JSON row, ensuring the order matches the table schema
-        values = tuple(row[col['name']] for col in json_response['columns'])
+        values = tuple(row[col['name']] for col in columns_sql ) #json_response['columns']
         placeholders = ', '.join('?' for _ in values)  # Create placeholders for parameterized query
         insert_sql = f"INSERT INTO {table_name} VALUES ({placeholders})"
         cursor.execute(insert_sql, values)
