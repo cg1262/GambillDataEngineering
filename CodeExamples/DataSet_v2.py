@@ -4,16 +4,37 @@ import pyodbc
 import GetParameters as gp
 import json
 
-# Function to create SQL column definitions from JSON
 def parse_json_response(json_response):
-    columns = json_response["columns"]
-    data = json_response["data"]
-    sql = json_response['sql_create']
-    # Create SQL column definitions
-    columns_with_types = [f"{col['name']} {col['type']}" for col in columns]
-    create_table_structure = ", ".join(columns_with_types)
+    print(json_response)
+    try:
+        columns = json_response["columns"]
+        data = json_response["data"]
+        sql = json_response['sql_create']
+        column_count = json_response["Column_Count"]
+        # Log the type and content of columns to check the structure
+        print(f"Columns type: {type(columns)}")
+        print(f"Columns content: {columns}")
+        print(f"SQL Create statement: {sql}")
 
-    return create_table_structure, data, sql
+        # Check if columns is a list or a dictionary
+        if isinstance(columns, list):
+            # Standard expected case: columns is a list of dictionaries
+            columns_with_types = [f"{col['name']} {col['type']}" for col in columns]
+        elif isinstance(columns, dict):
+            # Handle case where columns is a dictionary of column names and types
+            columns_with_types = [f"{name} {col_type}" for name, col_type in columns.items()]
+        else:
+            raise TypeError(f"Unexpected 'columns' type: {type(columns)}")
+
+        create_table_structure = ", ".join(columns_with_types)
+        return create_table_structure, data, sql, column_count
+
+    except KeyError as ke:
+        print(f"KeyError: {ke} - The expected keys are not present in the JSON structure.")
+        raise
+    except TypeError as te:
+        print(f"TypeError: {te} - Issue with the structure of the JSON data. Please check the format.")
+        raise
 
 # Function to extract and clean JSON content from the response (handles Markdown)
 def extract_json_from_response(response_text):
@@ -21,10 +42,13 @@ def extract_json_from_response(response_text):
     json_match = re.search(r'```json(.*?)```', response_text, re.DOTALL)
     if json_match:
         json_str = json_match.group(1).strip()  # Extract and strip whitespace
-        return json_str
     else:
-        # Fallback to return the response as-is if no Markdown is found
-        return response_text
+        json_str = response_text
+    
+    # Remove comments like "// Additional ..." that break JSON format
+    json_str = re.sub(r'//.*?\n', '', json_str)  # Remove single-line comments (//)
+    
+    return json_str
 
 # Set your parameter file path
 local_param_file = 'D:/data/params.txt'  # Replace with the location of your parameter file
@@ -51,6 +75,10 @@ table_name = input("What should your Table be named (include schema): ")
 
 # Function to request dataset in batches
 def request_dataset_in_batches(dataset_description, batch_size, start_row, custom_columns, constraints, table_name):
+    """TODO: 
+        Separate create table SQL Statement request from the data request and do it as two calls to the api. Then integraete the create table result into the 
+        request for the data to ensure that proper structure is maintained. 
+    """
     prompt = f'''
     Generate a dataset of {batch_size} rows of {dataset_description} starting from row {start_row} in JSON format.
     The JSON response should include:
@@ -59,7 +87,9 @@ def request_dataset_in_batches(dataset_description, batch_size, start_row, custo
     Ensure the number of rows matches the requested count.
     3. Ensure there are no missing values or incomplete records.
     4. A "sql_create" section with a create table SQL statement to create the table {table_name} in SQL Server.
+    5. A "Column_Count" Section.
     Return the full dataset in valid JSON format. Do not truncate or summarize the rows.
+    
     '''
 
     # Add custom columns to the prompt if provided
@@ -83,6 +113,7 @@ def request_dataset_in_batches(dataset_description, batch_size, start_row, custo
 # 2. Loop to request the dataset in batches
 all_data = []  # List to store all rows
 columns_sql = None  # Store the SQL column structure
+create = None  # Store the SQL CREATE statement
 for start_row in range(0, total_rows, batch_size):
     # Request a batch of rows
     json_str = request_dataset_in_batches(dataset_description, batch_size, start_row + 1, custom_columns, constraints, table_name)
@@ -91,11 +122,18 @@ for start_row in range(0, total_rows, batch_size):
     try:
         json_response = json.loads(json_str)  # Parse the cleaned JSON string
         if columns_sql is None:
-            columns_sql, batch_data,create = parse_json_response(json_response)
+            columns_sql, batch_data, create = parse_json_response(json_response)
         else:
-            _, batch_data = parse_json_response(json_response)
+            _, batch_data, _ = parse_json_response(json_response)  # Unpack the values but ignore create on subsequent batches
         
-        all_data.extend(batch_data)  # Append the batch of data to the full dataset
+        # Debugging: Print the row if the key is missing
+        for row in batch_data:
+            try:
+                values = tuple(row[col['name']] for col in json_response["columns"])
+            except KeyError as e:
+                print(f"KeyError: {e} - The row causing the issue: {row}")
+                raise
+            all_data.append(values)  # Append each row of values
     except json.JSONDecodeError as e:
         print(f"Error parsing JSON from OpenAI response: {e}")
         exit()
@@ -111,20 +149,24 @@ except pyodbc.Error as db_error:
 
 # 4. Generate and execute CREATE TABLE SQL statement
 try:
-    create_table_sql = create
+    create_table_sql = create  # Use the `create` statement from the first batch
     cursor.execute(create_table_sql)
     conn.commit()
 except pyodbc.Error as sql_error:
-    print(f"Error creating table: {sql_error}")
-    conn.rollback()
-    conn.close()
-    exit()
+    try: 
+        cursor.execute(f"Drop Table {table_name}")
+        create_table_sql = create  # Use the `create` statement from the first batch
+        cursor.execute(create_table_sql)
+        conn.commit()
+    except: 
+        print(f"Error creating table: {sql_error}")
+        conn.rollback()
+        conn.close()
+        exit()
 
 # 5. Insert synthetic data into SQL Server
 try:
-    for row in all_data:
-        # Extract values from the JSON row, ensuring the order matches the table schema
-        values = tuple(row[col['name']] for col in json_response["columns"])
+    for values in all_data:
         placeholders = ', '.join('?' for _ in values)  # Create placeholders for parameterized query
         insert_sql = f"INSERT INTO {table_name} VALUES ({placeholders})"
         cursor.execute(insert_sql, values)
