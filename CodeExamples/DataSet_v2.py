@@ -89,7 +89,8 @@ def request_dataset_in_batches(dataset_description, batch_size, start_row, custo
     4. A "sql_create" section with a create table SQL statement to create the table {table_name} in SQL Server.
     5. A "Column_Count" Section.
     Return the full dataset in valid JSON format. Do not truncate or summarize the rows.
-    
+    Provide the data as a JSON payload, including a header row.
+    Only return the JSON data, no other text.
     '''
 
     # Add custom columns to the prompt if provided
