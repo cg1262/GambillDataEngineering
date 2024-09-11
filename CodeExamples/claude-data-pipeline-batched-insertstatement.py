@@ -55,10 +55,11 @@ def generate_synthetic_data_batch(schema, batch_size, description, custom_column
     Generate a synthetic dataset with exactly {batch_size} records.
     Data should mimic {description}.
     Use these column names: {', '.join(column_names)}
-    Provide the data as a CSV string, including a header row.
-    Data should have exactly the columns needed to be inserted into this table format:
+    Provide the data as a insert into statement for sql.
+    Please return the insert statements with the values needed to be inserted into this table format:
     {query}
-    Only return the CSV data, no other text.
+    Only return the insert statements separated by a semicolon with one on each row.
+    If there is a value with an apostrophe in it please replace it with: ''.
     """
     if constraints:
         prompt += f" Constraints: {constraints}."
@@ -75,18 +76,20 @@ def generate_synthetic_data_batch(schema, batch_size, description, custom_column
 
 def load_data_to_sql_server(data, table_name, connection_string):
     # Create a DataFrame from the CSV data
-    df = pd.read_csv(StringIO(data))
-
+    #df = pd.read_csv(StringIO(data))
+    print(data)
     # Establish a connection to SQL Server
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
-
+    cursor.execute(data)
     # Create the table (adjust datatypes as needed)
     #columns = [f"{col} NVARCHAR(255)" for col in df.columns]
     #create_table_query = f"CREATE TABLE {table_name} ({', '.join(columns)})"
     #cursor.execute(create_table_query)
 
     # Insert the data
+    
+    """
     for _, row in df.iterrows():
         placeholders = ', '.join(['?' for _ in row])
         insert_query = f"INSERT INTO {table_name} VALUES ({placeholders})"
@@ -98,7 +101,7 @@ def load_data_to_sql_server(data, table_name, connection_string):
             print(f"Could not load:")
             print(insert_query)
             print(e)
-
+    """
     # Commit the changes and close the connection
     conn.commit()
     conn.close()
@@ -107,9 +110,11 @@ def create_table_if_not_exists(table_name, schema, connection_string):
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
     
-    columns = [f"{col['name']} NVARCHAR(max)" for col in schema['columns']]
+    columns = [col['name'].replace(' ','_') + " NVARCHAR(max)" for col in schema['columns']]
     create_query = f"CREATE TABLE {table_name} ({', '.join(columns)})"
     create_table_query = f"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{table_name}' AND xtype='U') CREATE TABLE {table_name} ({', '.join(columns)})"
+    
+    print(create_table_query)
     try: 
         cursor.execute(create_table_query)
     except: 
@@ -138,12 +143,12 @@ def generate_and_load_data(schema, total_records, batch_size, table_name, connec
     print(f"Successfully loaded {records_generated} records into {table_name}")
 
 # Example usage
-description = 'SquareEnix product table.'
-custom_columns = 'MSRP, Product Description, Release Date'
+description = 'Healthcare data from Blue Cross Blue Shield of Illinois'
+custom_columns = ''
 constraints = ''
-total_records = 1000
-batch_size = 50
-table_name = "staging.SqEn_Products3"
+total_records = 100
+batch_size = 10
+table_name = "staging.HealthCareBCBSIL"
 schema = generate_synthetic_schema(description, custom_columns, constraints)
 conn_str = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 

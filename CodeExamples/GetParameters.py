@@ -16,6 +16,6 @@ def getParam(ParameterFile,ParameterName):
  
 
     # Print the variables to verify
-    print(f"param1: {parameterValue}")
+    #print(f"param1: {parameterValue}")
     return parameterValue
  
