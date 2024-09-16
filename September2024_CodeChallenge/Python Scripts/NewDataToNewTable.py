@@ -1,9 +1,15 @@
+"""
+Example command line execution: 
+python NewDataToNewTable.py DBUserName DBpassword DatabaseName ServerName CurrentFileLocation TableName 
+"""
+
 # Import New data into staging tables
 import pandas as pd
 import sqlalchemy as sa
 import pyodbc
 import json
 import sys
+
 
 def load_data(file_path, table_name):
     """
@@ -86,6 +92,8 @@ def load_data(file_path, table_name):
         conn.close()
 
 if __name__ == "__main__":
-    newFile = sys.argv[5]
+    
+    newFile = input("Please enter the full path and filename of the file to upload: ") # sys.argv[5]
     newTable = sys.argv[6]
     load_data(newFile, newTable)
+
