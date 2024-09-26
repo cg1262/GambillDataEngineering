@@ -1,0 +1,10 @@
+This is JSON
+{
+    "name": "Chris",
+    "age": 30,
+    "skills": [
+        "Python",
+        "SQL",
+        "Data Engineering"
+    ]
+}
