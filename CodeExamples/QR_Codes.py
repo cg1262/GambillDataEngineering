@@ -24,7 +24,7 @@ qr.add_data(website_address)
 qr.make(fit=True)
 
 # Step 3: Create an image of the QR code
-qr_code_image = qr.make_image(fill='orange', back_color='white').convert('RGB')
+qr_code_image = qr.make_image(fill='black', back_color='white').convert('RGB')
 
 # Step 4: Open your logo image and resize it
 logo = Image.open(logo)
