@@ -18,4 +18,9 @@ def getParam(ParameterFile,ParameterName):
     # Print the variables to verify
     #print(f"param1: {parameterValue}")
     return parameterValue
- 
+
+def add(x, y):
+    return x + y
+
+def subtract(x, y):
+    return x - y

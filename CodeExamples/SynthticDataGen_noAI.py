@@ -3,6 +3,7 @@ import numpy as np
 from faker import Faker
 import random
 from datetime import datetime, timedelta
+import sqlalchemy
 
 fake = Faker()
 Faker.seed(0)
