@@ -2,7 +2,7 @@
 #pip install qrcode[pil]
 import qrcode
 from PIL import Image
-website_address = "https://www.gambilldataengineering.com/contact"
+website_address = "https://www.gambilldataengineering.com/data-sphere"
 logo = "D:/android.png"
 # Create a QR code for a website
 qr = qrcode.make(website_address)

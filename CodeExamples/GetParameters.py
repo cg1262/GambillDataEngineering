@@ -1,5 +1,5 @@
-
-def getParam(ParameterFile,ParameterName):
+param_file = 'D:/data/params.txt'
+def getParam(ParameterName,ParameterFile='D:/data/params.txt'):
     # Create an empty dictionary to store parameters
     params = {}
 
