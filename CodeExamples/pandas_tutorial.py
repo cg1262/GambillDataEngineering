@@ -12,6 +12,7 @@ for chunk in pd.read_csv(f'{file_path}large_data.csv', chunksize=10000):
 
 final_df = pd.concat(processed_chunks)
 print(final_df.head())
+final_df.to_parquet(f"{file_path}large_data.parquet")
 """
 print("**********************\nCSV Dataframe fillna:")
 csv_data.fillna(0,inplace=True) # Replace missing values with 0
