@@ -1,16 +1,16 @@
 SELECT 
-    c.customer_name,
-    c.customer_country,
-    SUM(o.order_total) AS total_spent
-FROM 
-    code_challenge.customers c
-LEFT JOIN 
-    code_challenge.orders o ON c.customer_id = o.customer_id
-LEFT JOIN 
-    code_challenge.order_items oi ON o.order_id = oi.order_id
-WHERE 
-    o.order_date BETWEEN '2024-01-01' AND '2024-12-31'
-GROUP BY 
-    c.customer_country,c.customer_name
-ORDER BY 
-    total_spent DESC;
+    order_id ID, 
+    format(order_date,'MM-dd-yy') Ordered, 
+    format(shipped_date,'MM-dd-yy') Shipped, 
+    format(received_date,'MM-dd-yy') Received, 
+    case when received_date is not null 
+    then 'Received'
+    when shipped_date is not null 
+    then 'Shipped'
+    when order_date is not null
+    then 'Ordered'
+    end as Status,
+    COALESCE(received_date, 
+             shipped_date, 
+             order_date) AS status_date
+FROM orders;
