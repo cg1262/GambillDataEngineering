@@ -12,8 +12,8 @@ base_url = "https://d37ci6vzurychx.cloudfront.net/trip-data/{DataSet}_{year}-{mo
 # Date range for data
 start_year = 2019  # starting year
 end_year = 2023    # ending year
-datasets = [#'yellow_tripdata'
-            #,'green_tripdata',
+datasets = ['yellow_tripdata'
+            ,'green_tripdata',
             'fhv_tripdata'] #TLC datasets
 # Function to download a single file
 def download_data(Dataset,year, month):
